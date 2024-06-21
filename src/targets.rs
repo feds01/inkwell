@@ -14,7 +14,7 @@ use llvm_sys::target_machine::{
     LLVMTargetHasAsmBackend, LLVMTargetHasJIT, LLVMTargetHasTargetMachine, LLVMTargetMachineEmitToFile,
     LLVMTargetMachineEmitToMemoryBuffer, LLVMTargetMachineRef, LLVMTargetRef,
 };
-#[llvm_versions(18..)]
+#[llvm_versions(18.1..)]
 use llvm_sys::target_machine::{
     LLVMCreateTargetMachineOptions, LLVMCreateTargetMachineWithOptions, LLVMDisposeTargetMachineOptions,
     LLVMTargetMachineOptionsRef, LLVMTargetMachineOptionsSetABI, LLVMTargetMachineOptionsSetCPU,
@@ -960,7 +960,7 @@ impl Target {
     /// assert_eq!(target_machine.get_cpu().to_str(), Ok("x86-64"));
     /// assert_eq!(target_machine.get_feature_string().to_str(), Ok("+avx2"));
     /// ```
-    #[llvm_versions(18..)]
+    #[llvm_versions(18.1..)]
     pub fn create_target_machine_from_options(
         &self,
         triple: &TargetTriple,
@@ -1422,11 +1422,11 @@ impl Drop for TargetData {
 ///
 /// The option structure exposes an additional setting (i.e., the target ABI)
 /// and provides default values for unspecified settings.
-#[llvm_versions(18..)]
+#[llvm_versions(18.1..)]
 #[derive(Default, Debug)]
 pub struct TargetMachineOptions(Option<LLVMTargetMachineOptionsRef>);
 
-#[llvm_versions(18..)]
+#[llvm_versions(18.1..)]
 impl TargetMachineOptions {
     pub fn new() -> Self {
         Default::default()
@@ -1491,7 +1491,7 @@ impl TargetMachineOptions {
     }
 }
 
-#[llvm_versions(18..)]
+#[llvm_versions(18.1..)]
 impl Drop for TargetMachineOptions {
     fn drop(&mut self) {
         if let Some(inner) = self.0 {

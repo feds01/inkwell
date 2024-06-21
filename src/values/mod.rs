@@ -24,7 +24,7 @@ mod vec_value;
     feature = "llvm15-0",
     feature = "llvm16-0",
     feature = "llvm17-0",
-    feature = "llvm18-0"
+    feature = "llvm18-1"
 )))]
 mod callable_value;
 
@@ -32,7 +32,7 @@ mod callable_value;
     feature = "llvm15-0",
     feature = "llvm16-0",
     feature = "llvm17-0",
-    feature = "llvm18-0"
+    feature = "llvm18-1"
 )))]
 pub use crate::values::callable_value::CallableValue;
 
@@ -59,7 +59,7 @@ pub use crate::values::traits::AsValueRef;
 pub use crate::values::traits::{AggregateValue, AnyValue, BasicValue, FloatMathValue, IntMathValue, PointerMathValue};
 pub use crate::values::vec_value::VectorValue;
 
-#[llvm_versions(18..)]
+#[llvm_versions(18.1..)]
 pub use llvm_sys::LLVMTailCallKind;
 
 use llvm_sys::core::{
