@@ -15,14 +15,14 @@ fn test_operands() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-0"
+        feature = "llvm18-1"
     )))]
     let f32_ptr_type = f32_type.ptr_type(AddressSpace::default());
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-0"
+        feature = "llvm18-1"
     ))]
     let f32_ptr_type = context.ptr_type(AddressSpace::default());
     let fn_type = void_type.fn_type(&[f32_ptr_type.into()], false);
@@ -271,14 +271,14 @@ fn test_instructions() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-0"
+        feature = "llvm18-1"
     )))]
     let f32_ptr_type = f32_type.ptr_type(AddressSpace::default());
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-0"
+        feature = "llvm18-1"
     ))]
     let f32_ptr_type = context.ptr_type(AddressSpace::default());
     let fn_type = void_type.fn_type(&[f32_ptr_type.into(), f32_type.into()], false);
@@ -375,14 +375,14 @@ fn test_volatile_atomicrmw_cmpxchg() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-0"
+        feature = "llvm18-1"
     )))]
     let i32_ptr_type = i32_type.ptr_type(AddressSpace::default());
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-0"
+        feature = "llvm18-1"
     ))]
     let i32_ptr_type = context.ptr_type(AddressSpace::default());
     let fn_type = void_type.fn_type(&[i32_ptr_type.into(), i32_type.into()], false);
@@ -442,14 +442,14 @@ fn test_mem_instructions() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-0"
+        feature = "llvm18-1"
     )))]
     let f32_ptr_type = f32_type.ptr_type(AddressSpace::default());
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-0"
+        feature = "llvm18-1"
     ))]
     let f32_ptr_type = context.ptr_type(AddressSpace::default());
     let fn_type = void_type.fn_type(&[f32_ptr_type.into(), f32_type.into()], false);
@@ -520,14 +520,14 @@ fn test_mem_instructions() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-0"
+        feature = "llvm18-1"
     )))]
     let f32_ptr_type = f32_type.ptr_type(AddressSpace::default());
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-0"
+        feature = "llvm18-1"
     ))]
     let f32_ptr_type = context.ptr_type(AddressSpace::default());
     let fn_type = void_type.fn_type(&[f32_ptr_type.into(), f32_type.into()], false);
@@ -564,7 +564,7 @@ fn test_mem_instructions() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-0"
+        feature = "llvm18-1"
     ))]
     let load = builder.build_load(f32_type, arg1, "").unwrap();
     let load_instruction = load.as_instruction_value().unwrap();
@@ -617,14 +617,14 @@ fn test_atomic_ordering_mem_instructions() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-0"
+        feature = "llvm18-1"
     )))]
     let f32_ptr_type = f32_type.ptr_type(AddressSpace::default());
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-0"
+        feature = "llvm18-1"
     ))]
     let f32_ptr_type = context.ptr_type(AddressSpace::default());
     let fn_type = void_type.fn_type(&[f32_ptr_type.into(), f32_type.into()], false);
@@ -661,7 +661,7 @@ fn test_atomic_ordering_mem_instructions() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-0"
+        feature = "llvm18-1"
     ))]
     let load = builder.build_load(f32_type, arg1, "").unwrap();
     let load_instruction = load.as_instruction_value().unwrap();
@@ -710,14 +710,14 @@ fn test_metadata_kinds() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-0"
+        feature = "llvm18-1"
     )))]
     let ptr_type = i8_type.ptr_type(AddressSpace::default());
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-0"
+        feature = "llvm18-1"
     ))]
     let ptr_type = context.ptr_type(AddressSpace::default());
     let struct_type = context.struct_type(&[i8_type.into(), f32_type.into()], false);
@@ -757,14 +757,14 @@ fn test_find_instruction_with_name() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-0"
+        feature = "llvm18-1"
     )))]
     let i32_ptr_type = i32_type.ptr_type(AddressSpace::default());
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-0"
+        feature = "llvm18-1"
     ))]
     let i32_ptr_type = context.ptr_type(AddressSpace::default());
 
@@ -784,7 +784,7 @@ fn test_find_instruction_with_name() {
     assert_eq!(some_number.unwrap().get_name().unwrap().to_str(), Ok("some_number"))
 }
 
-#[llvm_versions(18..)]
+#[llvm_versions(18.1..)]
 #[test]
 fn test_fast_math_flags() {
     let context = Context::create();
@@ -828,7 +828,7 @@ fn test_fast_math_flags() {
     assert_eq!(f32_addition.get_fast_math_flags(), Some(1));
 }
 
-#[llvm_versions(18..)]
+#[llvm_versions(18.1..)]
 #[test]
 fn test_zext_non_negative_flag() {
     let context = Context::create();
@@ -870,7 +870,7 @@ fn test_zext_non_negative_flag() {
     assert_eq!(i32_sext.get_non_negative_flag(), None);
 }
 
-#[llvm_versions(18..)]
+#[llvm_versions(18.1..)]
 #[test]
 fn test_or_disjoint_flag() {
     let context = Context::create();
