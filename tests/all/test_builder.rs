@@ -51,14 +51,14 @@ fn test_build_call() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     )))]
     let fn_ptr_type = fn_ptr.get_type();
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let fn_ptr_type = context.ptr_type(AddressSpace::default());
 
@@ -86,7 +86,7 @@ fn test_build_call() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let load = builder
         .build_load(fn_ptr_type, alloca, "load")
@@ -115,7 +115,7 @@ fn test_build_call() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     builder.build_indirect_call(fn_type2, load, &[], "call").unwrap();
     builder.build_return(None).unwrap();
@@ -183,14 +183,14 @@ fn test_build_invoke_cleanup_resume() {
             feature = "llvm15-0",
             feature = "llvm16-0",
             feature = "llvm17-0",
-            feature = "llvm18-1"
+            feature = "llvm18-0"
         )))]
         let i8_ptr_type = context.i32_type().ptr_type(AddressSpace::default());
         #[cfg(any(
             feature = "llvm15-0",
             feature = "llvm16-0",
             feature = "llvm17-0",
-            feature = "llvm18-1"
+            feature = "llvm18-0"
         ))]
         let i8_ptr_type = context.ptr_type(AddressSpace::default());
         let i32_type = context.i32_type();
@@ -267,14 +267,14 @@ fn test_build_invoke_catch_all() {
             feature = "llvm15-0",
             feature = "llvm16-0",
             feature = "llvm17-0",
-            feature = "llvm18-1"
+            feature = "llvm18-0"
         )))]
         let i8_ptr_type = context.i32_type().ptr_type(AddressSpace::default());
         #[cfg(any(
             feature = "llvm15-0",
             feature = "llvm16-0",
             feature = "llvm17-0",
-            feature = "llvm18-1"
+            feature = "llvm18-0"
         ))]
         let i8_ptr_type = context.ptr_type(AddressSpace::default());
         let i32_type = context.i32_type();
@@ -355,14 +355,14 @@ fn landing_pad_filter() {
             feature = "llvm15-0",
             feature = "llvm16-0",
             feature = "llvm17-0",
-            feature = "llvm18-1"
+            feature = "llvm18-0"
         )))]
         let i8_ptr_type = context.i32_type().ptr_type(AddressSpace::default());
         #[cfg(any(
             feature = "llvm15-0",
             feature = "llvm16-0",
             feature = "llvm17-0",
-            feature = "llvm18-1"
+            feature = "llvm18-0"
         ))]
         let i8_ptr_type = context.ptr_type(AddressSpace::default());
         let i32_type = context.i32_type();
@@ -413,14 +413,14 @@ fn test_null_checked_ptr_ops() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     )))]
     let i8_ptr_type = context.i32_type().ptr_type(AddressSpace::default());
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let i8_ptr_type = context.ptr_type(AddressSpace::default());
     let i64_type = context.i64_type();
@@ -472,7 +472,7 @@ fn test_null_checked_ptr_ops() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let index1 = builder.build_load(i8_ptr_type, new_ptr, "deref").unwrap();
 
@@ -531,7 +531,7 @@ fn test_null_checked_ptr_ops() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let index1 = builder.build_load(i8_ptr_type, new_ptr, "deref").unwrap();
 
@@ -1020,14 +1020,14 @@ fn test_vector_pointer_ops() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     )))]
     let i8_ptr_vec_type = context.i8_type().ptr_type(AddressSpace::default()).vec_type(4);
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let i8_ptr_vec_type = context.ptr_type(AddressSpace::default()).vec_type(4);
     let bool_vec_type = context.bool_type().vec_type(4);
@@ -1085,7 +1085,7 @@ fn test_insert_value() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let array = builder
         .build_load(array_type, array_alloca, "array_load")
@@ -1144,7 +1144,7 @@ fn test_insert_value() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let struct_value = builder
         .build_load(struct_type, struct_alloca, "struct_load")
@@ -1290,14 +1290,14 @@ fn run_memcpy_on<'ctx>(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     )))]
     let fn_type = i32_type.ptr_type(AddressSpace::default()).fn_type(&[], false);
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let fn_type = context.ptr_type(AddressSpace::default()).fn_type(&[], false);
     let fn_value = module.add_function("test_fn", fn_type, None);
@@ -1331,7 +1331,7 @@ fn run_memcpy_on<'ctx>(
             feature = "llvm15-0",
             feature = "llvm16-0",
             feature = "llvm17-0",
-            feature = "llvm18-1"
+            feature = "llvm18-0"
         ))]
         let elem_ptr = unsafe {
             builder
@@ -1366,7 +1366,7 @@ fn run_memcpy_on<'ctx>(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let dest_ptr = unsafe {
         builder
@@ -1422,14 +1422,14 @@ fn run_memmove_on<'ctx>(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     )))]
     let fn_type = i32_type.ptr_type(AddressSpace::default()).fn_type(&[], false);
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let fn_type = context.ptr_type(AddressSpace::default()).fn_type(&[], false);
     let fn_value = module.add_function("test_fn", fn_type, None);
@@ -1463,7 +1463,7 @@ fn run_memmove_on<'ctx>(
             feature = "llvm15-0",
             feature = "llvm16-0",
             feature = "llvm17-0",
-            feature = "llvm18-1"
+            feature = "llvm18-0"
         ))]
         let elem_ptr = unsafe {
             builder
@@ -1498,7 +1498,7 @@ fn run_memmove_on<'ctx>(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let dest_ptr = unsafe {
         builder
@@ -1555,14 +1555,14 @@ fn run_memset_on<'ctx>(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     )))]
     let fn_type = i32_type.ptr_type(AddressSpace::default()).fn_type(&[], false);
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let fn_type = context.ptr_type(AddressSpace::default()).fn_type(&[], false);
     let fn_value = module.add_function("test_fn", fn_type, None);
@@ -1602,7 +1602,7 @@ fn run_memset_on<'ctx>(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let part_2 = unsafe {
         builder
@@ -1658,28 +1658,28 @@ fn test_bit_cast() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     )))]
     let i32_ptr_type = i32_type.ptr_type(AddressSpace::default());
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let i32_ptr_type = context.ptr_type(AddressSpace::default());
     #[cfg(not(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     )))]
     let i64_ptr_type = i64_type.ptr_type(AddressSpace::default());
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let i64_ptr_type = context.ptr_type(AddressSpace::default());
     let i32_vec_type = i32_type.vec_type(2);
@@ -1740,14 +1740,14 @@ fn test_atomicrmw() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     )))]
     let ptr_value = i32_type.ptr_type(AddressSpace::default()).get_undef();
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let ptr_value = context.ptr_type(AddressSpace::default()).get_undef();
     let zero_value = i32_type.const_zero();
@@ -1779,14 +1779,14 @@ fn test_atomicrmw() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     )))]
     let ptr_value = i31_type.ptr_type(AddressSpace::default()).get_undef();
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let ptr_value = context.ptr_type(AddressSpace::default()).get_undef();
     let zero_value = i31_type.const_zero();
@@ -1797,14 +1797,14 @@ fn test_atomicrmw() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     )))]
     let ptr_value = i4_type.ptr_type(AddressSpace::default()).get_undef();
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let ptr_value = context.ptr_type(AddressSpace::default()).get_undef();
     let zero_value = i4_type.const_zero();
@@ -1830,28 +1830,28 @@ fn test_cmpxchg() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     )))]
     let i32_ptr_type = i32_type.ptr_type(AddressSpace::default());
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let i32_ptr_type = context.ptr_type(AddressSpace::default());
     #[cfg(not(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     )))]
     let i32_ptr_ptr_type = i32_ptr_type.ptr_type(AddressSpace::default());
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let i32_ptr_ptr_type = context.ptr_type(AddressSpace::default());
 
@@ -2029,14 +2029,14 @@ fn test_safe_struct_gep() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     )))]
     let i32_ptr_ty = i32_ty.ptr_type(AddressSpace::default());
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let i32_ptr_ty = context.ptr_type(AddressSpace::default());
     let field_types = &[i32_ty.into(), i32_ty.into()];
@@ -2045,14 +2045,14 @@ fn test_safe_struct_gep() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     )))]
     let struct_ptr_ty = struct_ty.ptr_type(AddressSpace::default());
     #[cfg(any(
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     let struct_ptr_ty = context.ptr_type(AddressSpace::default());
     let fn_type = void_type.fn_type(&[i32_ptr_ty.into(), struct_ptr_ty.into()], false);
@@ -2088,7 +2088,7 @@ fn test_safe_struct_gep() {
         feature = "llvm15-0",
         feature = "llvm16-0",
         feature = "llvm17-0",
-        feature = "llvm18-1"
+        feature = "llvm18-0"
     ))]
     {
         assert!(builder.build_struct_gep(i32_ty, i32_ptr, 0, "struct_gep").is_err());
