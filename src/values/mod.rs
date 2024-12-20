@@ -16,15 +16,19 @@ mod int_value;
 mod metadata_value;
 mod phi_value;
 mod ptr_value;
+mod scalable_vec_value;
 mod struct_value;
 mod traits;
 mod vec_value;
+
+#[cfg(feature = "llvm18-0")]
+pub(crate) mod operand_bundle;
 
 #[cfg(not(any(
     feature = "llvm15-0",
     feature = "llvm16-0",
     feature = "llvm17-0",
-    feature = "llvm18-1"
+    feature = "llvm18-0"
 )))]
 mod callable_value;
 
@@ -32,9 +36,12 @@ mod callable_value;
     feature = "llvm15-0",
     feature = "llvm16-0",
     feature = "llvm17-0",
-    feature = "llvm18-1"
+    feature = "llvm18-0"
 )))]
 pub use crate::values::callable_value::CallableValue;
+
+#[llvm_versions(18..)]
+pub use crate::values::operand_bundle::OperandBundle;
 
 use crate::support::{to_c_str, LLVMString};
 pub use crate::values::array_value::ArrayValue;
@@ -53,13 +60,16 @@ pub use crate::values::metadata_value::{MetadataValue, FIRST_CUSTOM_METADATA_KIN
 pub use crate::values::phi_value::IncomingIter;
 pub use crate::values::phi_value::PhiValue;
 pub use crate::values::ptr_value::PointerValue;
+pub use crate::values::scalable_vec_value::ScalableVectorValue;
 pub use crate::values::struct_value::FieldValueIter;
 pub use crate::values::struct_value::StructValue;
 pub use crate::values::traits::AsValueRef;
-pub use crate::values::traits::{AggregateValue, AnyValue, BasicValue, FloatMathValue, IntMathValue, PointerMathValue};
+pub use crate::values::traits::{
+    AggregateValue, AnyValue, BasicValue, FloatMathValue, IntMathValue, PointerMathValue, VectorBaseValue,
+};
 pub use crate::values::vec_value::VectorValue;
 
-#[llvm_versions(18.1..)]
+#[llvm_versions(18..)]
 pub use llvm_sys::LLVMTailCallKind;
 
 use llvm_sys::core::{
@@ -132,7 +142,7 @@ impl<'ctx> Value<'ctx> {
         {
             use llvm_sys::core::LLVMSetValueName2;
 
-            unsafe { LLVMSetValueName2(self.value, c_string.as_ptr(), name.len()) }
+            unsafe { LLVMSetValueName2(self.value, c_string.as_ptr(), c_string.to_bytes().len()) }
         }
     }
 
