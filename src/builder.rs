@@ -1,9 +1,11 @@
 //! A `Builder` enables you to build instructions.
 
+#[llvm_versions(18..)]
+use llvm_sys::core::LLVMBuildCallWithOperandBundles;
 use llvm_sys::core::{
     LLVMAddCase, LLVMAddClause, LLVMAddDestination, LLVMBuildAShr, LLVMBuildAdd, LLVMBuildAddrSpaceCast,
     LLVMBuildAggregateRet, LLVMBuildAlloca, LLVMBuildAnd, LLVMBuildArrayAlloca, LLVMBuildArrayMalloc,
-    LLVMBuildAtomicCmpXchg, LLVMBuildAtomicRMW, LLVMBuildBitCast, LLVMBuildBr, LLVMBuildCast, LLVMBuildCondBr,
+    LLVMBuildAtomicCmpXchg, LLVMBuildAtomicRMW, LLVMBuildBinOp, LLVMBuildBitCast, LLVMBuildBr, LLVMBuildCast, LLVMBuildCondBr,
     LLVMBuildExactSDiv, LLVMBuildExtractElement, LLVMBuildExtractValue, LLVMBuildFAdd, LLVMBuildFCmp, LLVMBuildFDiv,
     LLVMBuildFMul, LLVMBuildFNeg, LLVMBuildFPCast, LLVMBuildFPExt, LLVMBuildFPToSI, LLVMBuildFPToUI, LLVMBuildFPTrunc,
     LLVMBuildFRem, LLVMBuildFSub, LLVMBuildFence, LLVMBuildFree, LLVMBuildGlobalString, LLVMBuildGlobalStringPtr,
@@ -42,12 +44,14 @@ use crate::context::AsContextRef;
 use crate::debug_info::DILocation;
 use crate::support::to_c_str;
 use crate::types::{AsTypeRef, BasicType, FloatMathType, FunctionType, IntMathType, PointerMathType, PointerType};
+#[llvm_versions(18..)]
+use crate::values::operand_bundle::OperandBundle;
 #[llvm_versions(..=14)]
 use crate::values::CallableValue;
 use crate::values::{
     AggregateValue, AggregateValueEnum, AsValueRef, BasicMetadataValueEnum, BasicValue, BasicValueEnum, CallSiteValue,
     FloatMathValue, FunctionValue, GlobalValue, InstructionOpcode, InstructionValue, IntMathValue, IntValue, PhiValue,
-    PointerMathValue, PointerValue, StructValue, VectorValue,
+    PointerMathValue, PointerValue, StructValue, VectorBaseValue,
 };
 
 use crate::{AtomicOrdering, AtomicRMWBinOp, FloatPredicate, IntPredicate};
@@ -308,6 +312,57 @@ impl<'ctx> Builder<'ctx> {
         self.build_call_help(function.get_type(), function.as_value_ref(), args, name)
     }
 
+    /// Build a function call instruction, with attached operand bundles.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use inkwell::context::Context;
+    /// use inkwell::values::OperandBundle;
+    ///
+    /// let context = Context::create();
+    /// let module = context.create_module("call_with_op_bundles");
+    /// let builder = context.create_builder();
+    /// let i32_type = context.i32_type();
+    ///
+    /// // declare i32 @func(i32)
+    /// let fn_type = i32_type.fn_type(&[i32_type.into()], false);
+    /// let fn_value = module.add_function("func", fn_type, None);
+    ///
+    /// let basic_block = context.append_basic_block(fn_value, "entry");
+    /// builder.position_at_end(basic_block);
+    ///
+    /// // %func_ret = call i32 @func(i32 0) [ "tag"(i32 0) ]
+    /// let ret_val = builder.build_direct_call_with_operand_bundles(
+    ///     fn_value,
+    ///     &[i32_type.const_zero().into()],
+    ///     &[OperandBundle::create("tag", &[i32_type.const_zero().into()])],
+    ///     "func_ret"
+    /// )
+    ///     .unwrap()
+    ///     .try_as_basic_value()
+    ///     .unwrap_left();
+    /// builder.build_return(Some(&ret_val)).unwrap();
+    ///
+    /// # module.verify().unwrap();
+    /// ```
+    #[llvm_versions(18..)]
+    pub fn build_direct_call_with_operand_bundles(
+        &self,
+        function: FunctionValue<'ctx>,
+        args: &[BasicMetadataValueEnum<'ctx>],
+        operand_bundles: &[OperandBundle<'ctx>],
+        name: &str,
+    ) -> Result<CallSiteValue<'ctx>, BuilderError> {
+        self.build_call_with_operand_bundles_help(
+            function.get_type(),
+            function.as_value_ref(),
+            args,
+            operand_bundles,
+            name,
+        )
+    }
+
     /// Call a function pointer. Because a pointer does not carry a type, the type of the function
     /// must be specified explicitly.
     ///
@@ -352,6 +407,28 @@ impl<'ctx> Builder<'ctx> {
         self.build_call_help(function_type, function_pointer.as_value_ref(), args, name)
     }
 
+    /// Build a call instruction to a function pointer, with attached operand bundles.
+    ///
+    /// See [Builder::build_direct_call_with_operand_bundles] for a usage example
+    /// with operand bundles.
+    #[llvm_versions(18..)]
+    pub fn build_indirect_call_with_operand_bundles(
+        &self,
+        function_type: FunctionType<'ctx>,
+        function_pointer: PointerValue<'ctx>,
+        args: &[BasicMetadataValueEnum<'ctx>],
+        operand_bundles: &[OperandBundle<'ctx>],
+        name: &str,
+    ) -> Result<CallSiteValue<'ctx>, BuilderError> {
+        self.build_call_with_operand_bundles_help(
+            function_type,
+            function_pointer.as_value_ref(),
+            args,
+            operand_bundles,
+            name,
+        )
+    }
+
     #[llvm_versions(15..)]
     fn build_call_help(
         &self,
@@ -381,6 +458,49 @@ impl<'ctx> Builder<'ctx> {
                 fn_val_ref,
                 args.as_mut_ptr(),
                 args.len() as u32,
+                c_string.as_ptr(),
+            )
+        };
+
+        unsafe { Ok(CallSiteValue::new(value)) }
+    }
+
+    #[llvm_versions(18..)]
+    fn build_call_with_operand_bundles_help(
+        &self,
+        function_type: FunctionType<'ctx>,
+        fn_val_ref: LLVMValueRef,
+        args: &[BasicMetadataValueEnum<'ctx>],
+        operand_bundles: &[OperandBundle<'ctx>],
+        name: &str,
+    ) -> Result<CallSiteValue<'ctx>, BuilderError> {
+        use llvm_sys::prelude::LLVMOperandBundleRef;
+
+        if self.positioned.get() != PositionState::Set {
+            return Err(BuilderError::UnsetPosition);
+        }
+        // LLVM gets upset when void return calls are named because they don't return anything
+        let name = match function_type.get_return_type() {
+            None => "",
+            Some(_) => name,
+        };
+
+        let fn_ty_ref = function_type.as_type_ref();
+
+        let c_string = to_c_str(name);
+        let mut args: Vec<LLVMValueRef> = args.iter().map(|val| val.as_value_ref()).collect();
+        let mut operand_bundles: Vec<LLVMOperandBundleRef> =
+            operand_bundles.iter().map(|val| val.as_mut_ptr()).collect();
+
+        let value = unsafe {
+            LLVMBuildCallWithOperandBundles(
+                self.builder,
+                fn_ty_ref,
+                fn_val_ref,
+                args.as_mut_ptr(),
+                args.len() as u32,
+                operand_bundles.as_mut_ptr(),
+                operand_bundles.len() as u32,
                 c_string.as_ptr(),
             )
         };
@@ -2502,6 +2622,16 @@ impl<'ctx> Builder<'ctx> {
         unsafe { Ok(T::new(value)) }
     }
 
+    pub fn build_binop<T: BasicValue<'ctx>>(&self, op: InstructionOpcode, lhs: T, rhs: T, name: &str) -> Result<BasicValueEnum<'ctx>, BuilderError> {
+        if self.positioned.get() != PositionState::Set {
+            return Err(BuilderError::UnsetPosition);
+        }
+        let c_string = to_c_str(name);
+        let value = unsafe { LLVMBuildBinOp(self.builder, op.into(), lhs.as_value_ref(), rhs.as_value_ref(), c_string.as_ptr()) };
+
+        unsafe { Ok(BasicValueEnum::new(value)) }
+    }
+
     pub fn build_cast<T: BasicType<'ctx>, V: BasicValue<'ctx>>(
         &self,
         op: InstructionOpcode,
@@ -2934,9 +3064,9 @@ impl<'ctx> Builder<'ctx> {
     ///
     /// builder.build_return(Some(&extracted)).unwrap();
     /// ```
-    pub fn build_extract_element(
+    pub fn build_extract_element<V: VectorBaseValue<'ctx>>(
         &self,
-        vector: VectorValue<'ctx>,
+        vector: V,
         index: IntValue<'ctx>,
         name: &str,
     ) -> Result<BasicValueEnum<'ctx>, BuilderError> {
@@ -2982,13 +3112,13 @@ impl<'ctx> Builder<'ctx> {
     /// builder.build_insert_element(vector_param, i32_seven, i32_zero, "insert").unwrap();
     /// builder.build_return(None).unwrap();
     /// ```
-    pub fn build_insert_element<V: BasicValue<'ctx>>(
+    pub fn build_insert_element<V: BasicValue<'ctx>, W: VectorBaseValue<'ctx>>(
         &self,
-        vector: VectorValue<'ctx>,
+        vector: W,
         element: V,
         index: IntValue<'ctx>,
         name: &str,
-    ) -> Result<VectorValue<'ctx>, BuilderError> {
+    ) -> Result<W, BuilderError> {
         if self.positioned.get() != PositionState::Set {
             return Err(BuilderError::UnsetPosition);
         }
@@ -3004,7 +3134,7 @@ impl<'ctx> Builder<'ctx> {
             )
         };
 
-        unsafe { Ok(VectorValue::new(value)) }
+        unsafe { Ok(W::new(value)) }
     }
 
     pub fn build_unreachable(&self) -> Result<InstructionValue<'ctx>, BuilderError> {
@@ -3199,13 +3329,13 @@ impl<'ctx> Builder<'ctx> {
     }
 
     // REVIEW: Do we need to constrain types here? subtypes?
-    pub fn build_shuffle_vector(
+    pub fn build_shuffle_vector<V: VectorBaseValue<'ctx>>(
         &self,
-        left: VectorValue<'ctx>,
-        right: VectorValue<'ctx>,
-        mask: VectorValue<'ctx>,
+        left: V,
+        right: V,
+        mask: V,
         name: &str,
-    ) -> Result<VectorValue<'ctx>, BuilderError> {
+    ) -> Result<V, BuilderError> {
         if self.positioned.get() != PositionState::Set {
             return Err(BuilderError::UnsetPosition);
         }
@@ -3220,7 +3350,7 @@ impl<'ctx> Builder<'ctx> {
             )
         };
 
-        unsafe { Ok(VectorValue::new(value)) }
+        unsafe { Ok(V::new(value)) }
     }
 
     // REVIEW: Is return type correct?
